@@ -1,7 +1,7 @@
 SimplePHPFileIndex
 ==================
 
-A simple well-not-designed PHP file index.
+A simple well-not-designed PHP file index. (Audo directory listing PHP page)
 
 Feature
 ==================
@@ -13,7 +13,7 @@ Feature
 * Twitter-bootstrap themed
 * jQuery-datatable powered
 * Highly-configurable
-* APC supported
+* APC (Cache) supported
 
 Screenshots
 ==================
