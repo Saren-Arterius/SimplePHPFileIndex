@@ -1,9 +1,19 @@
 SimplePHPFileIndex
 ==================
 
-A simple well-not-designed PHP file index with thumbnail and text preview function. 
+A simple well-not-designed PHP file index.
 
-It's bootstrap-themed, jQuery-datatables powered.
+Feature
+==================
+
+* Simple
+* Responsive
+* Thumbnail
+* Text preview
+* Twitter-bootstrap themed
+* jQuery-datatable powered
+* Highly-configurable
+* APC supported
 
 Usage
 ==================
