@@ -308,15 +308,17 @@ function getThumbnail($filepathEncoded) {
         $handle = fopen($filepathDecoded, "r");
         list($width, $height) = getimagesize($filepathDecoded);
         $srcImageStr = fread($handle, filesize($filepathDecoded));
-        $srcImage = imagecreatefromstring($srcImageStr);
         
         $maxPx = max($width, $height);
         if ($maxPx >= $settings["thumbnailSize"]) {
             $percent = $settings["thumbnailSize"]/$maxPx;
         } else {
-            apc_store($_SERVER['HTTP_HOST']."_thumb_$filepathEncoded", $srcImage, $settings["thumbnailTTL"]);
-            return $srcImage;
+            apc_store($_SERVER['HTTP_HOST']."_thumb_$filepathEncoded", $srcImageStr, $settings["thumbnailTTL"]);
+            return $srcImageStr;
         }
+        
+        $srcImage = imagecreatefromstring($srcImageStr);
+        
         $newwidth = $width * $percent;
         $newheight = $height * $percent;
 
