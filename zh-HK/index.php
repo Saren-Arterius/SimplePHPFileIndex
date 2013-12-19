@@ -517,7 +517,7 @@ $currentDir = currentDir();
                         }
                     },
                     "aaSorting": [
-                        [ 1, "desc" ],
+                        [ 1, "asc" ],
                         [ 0, "asc" ]
                     ],
                     "aoColumns": [
