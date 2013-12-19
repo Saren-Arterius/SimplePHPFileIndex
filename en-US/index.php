@@ -12,6 +12,8 @@ $settings = array(
     "responsive"    => True,/* Enable responsive design */    
     "icons"         => True,/* File icons */
     
+    "displayDot"    => False,   /* Display files and folders start with "." */
+    
     "thumbMimes"    => array("image"),   /* MIME types that thumbnails are able to be generated. */
     "thumbnailSize" => 220, /* Max PX of each side */
     
@@ -216,8 +218,14 @@ function getContent($dir) {
         $files = array();
         if ($handle = opendir($dir)) {
             while (false !== ($file = readdir($handle))) { //scan the folder
-                if (substr($file, 0, 1) != ".") {
-                    $files[] = $file;
+                if ($settings["displayDot"]) {
+                    if ($file != "." AND $file != "..") {
+                        $files[] = $file;
+                    }
+                } else {
+                    if (substr($file, 0, 1) != ".") {
+                        $files[] = $file;
+                    }
                 }
             }
             closedir($handle);
