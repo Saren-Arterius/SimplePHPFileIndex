@@ -6,6 +6,7 @@ A simple well-not-designed PHP file index. (Audo directory listing PHP page)
 Feature
 ==================
 
+* Single file
 * Simple design
 * Responsive design
 * Thumbnail
