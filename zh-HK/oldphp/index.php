@@ -193,7 +193,7 @@ function getURL($file) {
         }
         if (hasIndex($href)) {
             $href = str_replace("./", "", $href);
-            return "<a href='".rawurlencode($href)."'>".$iconImg." ".$file."</a>";
+            return "<a href='".$href."'>".$iconImg." ".$file."</a>";
         }
         return "<a href='?".base64_encode($href)."'>".$iconImg." ".$file."</a>";
     } else {
@@ -201,7 +201,7 @@ function getURL($file) {
         if ($settings["icons"]) {
             $iconImg = "<img src='?i=".getMimeType($currentDir.$file)."'/>";
         }
-        return "<a href='".rawurlencode($href)."'>".$iconImg." ".$file."</a>";
+        return "<a href='".$href."'>".$iconImg." ".$file."</a>";
     }
 }
 
