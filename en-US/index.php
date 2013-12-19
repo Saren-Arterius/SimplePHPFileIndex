@@ -60,7 +60,7 @@ $localization = array(
     "script"        => "System script",
 /*  "html"          => "Happy toffee milk lemon", */
     
-    "folder"        => "Folder",
+    "folder"        => "=Folder=",
     "file"          => "File",
     
     "goBackToParentDirectory" => "Go back to parent directory",
@@ -517,7 +517,7 @@ $currentDir = currentDir();
                         }
                     },
                     "aaSorting": [
-                        [ 2, "asc" ],
+                        [ 1, "asc" ],
                         [ 0, "asc" ]
                     ],
                     "aoColumns": [

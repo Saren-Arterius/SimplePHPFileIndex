@@ -60,7 +60,7 @@ $localization = array(
     "script"        => "腳本程式",
 /*  "html"          => "Happy toffee milk lemon", */
     
-    "folder"        => "資料夾",
+    "folder"        => "=資料夾=",
     "file"          => "檔案",
     
     "goBackToParentDirectory" => "回上層目錄",
@@ -517,7 +517,7 @@ $currentDir = currentDir();
                         }
                     },
                     "aaSorting": [
-                        [ 2, "asc" ],
+                        [ 1, "asc" ],
                         [ 0, "asc" ]
                     ],
                     "aoColumns": [
