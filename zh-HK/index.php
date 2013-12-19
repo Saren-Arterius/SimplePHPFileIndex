@@ -7,22 +7,22 @@
 
 error_reporting(0);
 
-$settings = [
+$settings = array(
     "helpers"       => True,/* Enable thumbnails, text preview, tooltip */
     "responsive"    => True,/* Enable responsive design */    
     "icons"         => True,/* File icons */
     
-    "thumbMimes"    => ["image"],   /* MIME types that thumbnails are able to be generated. */
+    "thumbMimes"    => array("image"),   /* MIME types that thumbnails are able to be generated. */
     "thumbnailSize" => 220, /* Max PX of each side */
     
-    "previewMimes"  => ["subtitle", "text", "python", "javascript", "script"/*, "html", "c++" */],
+    "previewMimes"  => array("subtitle", "text", "python", "javascript", "script"/*, "html", "c++" */),
     "previewLimit"  => 250, /* Bytes */
     
     "displayRows"   => 50,  /* Default display rows */
-    "rowsSelection" => [10 ,20, 30, 50, 100],   /* Numbers of display rows for selection */
+    "rowsSelection" => array(10 ,20, 30, 50, 100),   /* Numbers of display rows for selection */
     
-    "indexFiles"    => ["index.php", "index.html", "index.htm"],/* WARNING: Does not really prevent your files in a directory from being listed! */
-  //"indexFiles"    => [],  /* Do if you want the index page list files of indexed directories instead. */
+    "indexFiles"    => array("index.php", "index.html", "index.htm"),/* WARNING: Does not really prevent your files in a directory from being listed! */
+  //"indexFiles"    => array(),  /* Do if you want the index page list files of indexed directories instead. */
     
     /* Cache Time To Live (TTL) settings. They are all in seconds. 
        In case you don't know: Caches gets things faster, but things will not be updated real-time.
@@ -33,9 +33,9 @@ $settings = [
     "lastModdedTTL" => 180, /* Last modified time of a file */
     "thumbnailTTL"  => 600, /* Thumbnail of a viewable image */
     "previewTTL"    => 180, /* Preview text of a file */
-];
+);
 
-$localization = [
+$localization = array(
     "filename"  => "檔案名稱",
     "filetype"  => "檔案類型",
     "filesize"  => "檔案大小",
@@ -77,26 +77,26 @@ $localization = [
     "sInfoFiltered"         => "(已從_MAX_項內容中篩選)",
     "sInfoEmpty"            => "沒有符合要求的結果",
     "sEmptyTable"           => "資料夾中沒有內容",       
-];
+);
 
-$mimeTypes = [
-    "image"         => ["jpg", "jpeg", "png", "gif", "tif", "tiff", "pcd", "psd", "png", "ico"],
-    "video"         => ["avi", "wmv", "mov", "mp4", "mkv", "wtv", "rm", "rmvb", "rma", "m4v", "flv", "f4v", "ts", "mpg", "3gp", "webm", "pmp", "264"],
-    "audio"         => ["mp3", "ogg", "aac", "ape", "tta", "wav", "flac", "mid"],
-    "compressed"    => ["zip", "rar", "7z", "tar", "gz", "bz2", "lzw", "tgz"],
-    "cdimage"       => ["iso", "cue", "mds", "mdf"],
-    "executable"    => ["exe"],
-    "subtitle"      => ["ass", "srt"],
-    "installer"     => ["msi", "apk", "ipa"],
-    "appext"        => ["dll", "so"],
-    "text"          => ["txt", "nfo"],
-    "python"        => ["py"],
-    "javascript"    => ["js"],
-    "script"        => ["sh", "bat"],
-/*  "html"          => ["html", "htm"], */
-];
+$mimeTypes = array(
+    "image"         => array("jpg", "jpeg", "png", "gif", "tif", "tiff", "pcd", "psd", "png", "ico"),
+    "video"         => array("avi", "wmv", "mov", "mp4", "mkv", "wtv", "rm", "rmvb", "rma", "m4v", "flv", "f4v", "ts", "mpg", "3gp", "webm", "pmp", "264"),
+    "audio"         => array("mp3", "ogg", "aac", "ape", "tta", "wav", "flac", "mid"),
+    "compressed"    => array("zip", "rar", "7z", "tar", "gz", "bz2", "lzw", "tgz"),
+    "cdimage"       => array("iso", "cue", "mds", "mdf"),
+    "executable"    => array("exe"),
+    "subtitle"      => array("ass", "srt"),
+    "installer"     => array("msi", "apk", "ipa"),
+    "appext"        => array("dll", "so"),
+    "text"          => array("txt", "nfo"),
+    "python"        => array("py"),
+    "javascript"    => array("js"),
+    "script"        => array("sh", "bat"),
+/*  "html"          => array("html", "htm"), */
+);
 
-$iconOfMimeTypes = [
+$iconOfMimeTypes = array(
     /* Base64 encoded 24*24 PNG. Gnome icons are from Open Icon Library. 
        I don't either understand or care about the licenses of them,
        but I am pretty sure I am permitted to used them without asking. */
@@ -116,13 +116,13 @@ $iconOfMimeTypes = [
     "javascript"    => "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAZiS0dEAAAAAAAA+UO7fwAAAAlwSFlzAAAN1wAADdcBQiibeAAAAAl2cEFnAAAAGAAAABgAeEylpgAABK5JREFUSMe9lWtsFFUUx393pu2WtrQILaXtKhRa5SGQSkC0IYYPPsOjRTSICGhEw0djDBoSAjGGxEBI1BgNLxVbFaU8E0gIEBTRaALEQkuRAmXb3Zp2u922053p7Nzjh92WAi36RW8mmTn3cX5zz/+ce+E/bmqw8e33VcWmaWz14t4iATPRK/0PSqleQ6lGETnnaX0apOrlZav6/jVg777qmlllsyuLJ0xCKXXXZM/zsHp7sKwe2trbnEuXaqNa63cEvn5l+Wr9j4Dq776KL3thhRmJhonH44gIWmu0aERrlFKkpKSSmpqK52oys7JouFJv19VfbNKeLl+54rXwnQBjsKG1mEopXNdNONYaEZ0AiRD34vTGLDqjEQLBJi5frqds5qz0x+aUlyrDOPHFnp0j7gSkDDZEJAnStARbiMViiAgiIFoDglKKNJ8P0zTo6IgAMHFiiRGJdk6rq6vdv/vL7c+9umqNHgaQ6NeiKRhXAEgCkBwTEUTLwHd3V/fA2rKZj6REIpEnbgZuzAXODg3Q0k+ipSWIbdtJCIgAopEkNDU1le5uix27thN3XRYvqsRf6PcFmm88OSxAJ0MkIhQUFgzAJPnuH+uH5OblkhseTeBmgP0HaqisWKIMZSwGNt1TAwSCoRC2HQNRoBIOkYGJyRxUpKenM2PGDNJ8aWitcV13+vAiJ0MkCIWFBcnqkkQ29zsdnN2KW1CEoqIiPK1ThgckRUYpQsEQtm2TqDeFZfXQ0dlBj9VDtCuK53lkZmSSmZlJzsgcpkyecruO99LANAz8fn/iP5XickM9DY0NTC6dzLTJ08gfO460tDQ6o52EI2HC4TDHTx7HcdxbYb5XiAxlJDSIOaDg3IVzPL94KeHWAJ9uepPWwHW6op1k54xinH8Cb6zbypQFldQc3ofPTLsNcFsl99ON5A5KS0t4sLQUN+6SomDD2gpCjefJz+hiZnEK+RldhK5dYMPaCpSOE4/HsZxetn2y5crWjz58b1gNlDIIBkM4jo1SCqUUGVnZfPD5IXZsWUdz01WirRFyRt3HAw+VsPqtzbR3Rnh95Rpc16Uj0lF66OjBjcDmITVQSuH3Fw04P3XmJCLC+JKpvP/ZYQD6+hxito1tx+iNWbiuy649O8nLzaV87jxM04wMq4FSimAwiGM7aBEMw8BxHEaMuHWWedrDdR3iXnxg1y8tXU5LqIVTP52MIewevtCAoqIiFIofz54mMyOT83+c4/FHyxmqKWViWVGqf6jCVCZ9bt96QT6+CwDiiSSObBFBFDReb2Ths4v4+dczHDl2mIenTicvNw/TSCHuaSzL4mZzgB6rm4XPLOLQ0YO8+/b6bUOlqa/PdU9cbfzzqZJJpQM3WvH4YhquXGbB0wu53nSNi3W1RKIRbNsme2Q2Y0aPYWxePvPnzeeX385iKKMd8AHOYIAB5FXt+aaq14plZWVlzBVJpLBI4na+duMaheMKKR5fzOwxc8jJziHaFaU93EbrX61U117AcZzo0SPHNgJ5QBDQg69MH1AIpA4V5yUvVkz13180PTcvd3a6L73M016BaZgh27HPt7e1/94caKmt2XugDnCTzh3+j/Y3MAZ+y5PykDYAAAAldEVYdGNyZWF0ZS1kYXRlADIwMDktMDUtMjBUMDE6NDI6MDItMDQ6MDBh8u46AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDEwLTAyLTA4VDE0OjExOjQ4LTA3OjAw8g9iVgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0wMS0xMVQwOToxMzoyMS0wNzowMPf4hL8AAAA0dEVYdExpY2Vuc2UAaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbGljZW5zZXMvR1BMLzIuMC9sagaoAAAAJXRFWHRtb2RpZnktZGF0ZQAyMDA5LTA1LTE5VDIyOjU0OjMwLTA0OjAwOYbcegAAABN0RVh0U291cmNlAEdOT01FLUNvbG9yc6qZROIAAAAxdEVYdFNvdXJjZV9VUkwAaHR0cDovL2NvZGUuZ29vZ2xlLmNvbS9wL2dub21lLWNvbG9ycy9QHbXrAAAAAElFTkSuQmCC",
     "script"        => "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAANkE3LLaAgAAAAZiS0dEAAAAAAAA+UO7fwAAAAlwSFlzAAAASAAAAEgARslrPgAAAAl2cEFnAAAAGAAAABgAeEylpgAAA3hJREFUSMeVVbtu40YUPfMQX5JWDyqAEUix4SKw4cJFim3yC2kNA2kCpE2RIL3/IKnSZYH0bhY20i2Qyp+wgLCGI9MGZVuLXVmSRZnkzHBSrIcQLXljDXBBkJi5Z86591wSALi4uPi20Wj8yTnfwjOW1hppmka3t7d/3Nzc/L62tvZ+c3Nz6V4OAFLKCue8bFnWc/JDKQUpZZlS+r3necNer/fq5ORkGIYh9vf3FwGUUkRr/azkAJBlGaSUcBynXa/XfxJCyMFg8Gp7e3vyeC81lFddWZaBMYZWq9VptVq/+r7/4+XlZeP4+HgRIMuylUAIIdBaQwgBzjl83//S9/1f6vX6D2maNo6OjooSrcqAUgrOOaIowmAwgNYaWuuOZVk/u64bB0HwF4C4wGCVRQiB4zioVqtgjOVy1Wq1r3zf/67RaDQWGKwqUalUgud54JxDCAGlFJRSyLLMsW2bLwV46G8IIZ4NppQCADiOAwBIkgSEkGINTJHjOMZwOESpVAKltLDxqZVlGZIkAaUUvu/jsZcKDKbTKQghGI1GCPt9VMrlpSCEEBBCIKUEAKyvr2MymaBSqRRYFQCMeQghOD09xb9BANdxcH11hVkUFWpkAIQQqFQq2NvbA2MMQog811KJzGGpFFIh8M3Llyi/eIG/X79GFEUFAHNuY2MD0+kUnuflt1/KwASlFFJKjCcTdLtddN++RRAEiOMYZu98gS3LQhRFeZEf5tRyiYBPJhJpin/evMHtcIgkSfD11hbatRquwhAXvR6klNBaI0kSNJvNgjRLGWRZlocp3rtuF7PZDJVqFR8/fMD9/T0mo1HexkIIJEmSe2AeYL7NCxIZFoQQ2Lb9yVCcY3B9DcZY3u+MMVBKoZTKnyaHlPJpiYy+lFJYlgVKKVzXhW3bYIzlCUzfzwOY20spFxmY5CZqtRp2dnagtYbjOAUAI00cx7i7u0O73QYhJM/xZJENiziOsbu7i4ODg1yyeZ+YSNM0Hwue5+UyfRYAAMIwBGMs13yevmljxhhs20apVIJSCrPZDOUH139OIup5HprNJsbjcX4LM5PMWDYXmfeDZVlotVpmWJIFgLOzswmlNHBdF1przRjL/1rzMj02pQkhBKIoIkII3e/3gzAMkwLA4eHhu06n85vneV9orfXjov/f+9x3PR6PT8/Pz8cG4D+xu+SRhHTxZQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxMC0wMi0yM1QxODoxNDoyMC0wNzowMPX77HMAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTAtMDItMjNUMTg6MTQ6MjAtMDc6MDCEplTPAAAANXRFWHRMaWNlbnNlAGh0dHA6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL0xHUEwvMi4xLzvBtBgAAAAUdEVYdFNvdXJjZQBDcnlzdGFsIENsZWFy9eLnqAAAADp0RVh0U291cmNlX1VSTABodHRwOi8vY29tbW9ucy53aWtpbWVkaWEub3JnL3dpa2kvQ3J5c3RhbF9DbGVhcq++RWMAAAAASUVORK5CYII=",
 /*  "html"          => "iAmAbAsE64ENCodEDPng", */
-];
+);
 
 /* End of settings */
 
 /* Fake APC function, 10x slower than APC. */
 if (!function_exists("apc_exists") AND !function_exists("apc_store") AND !function_exists("apc_fetch")) {
-    $fakeAPC = [];
+    $fakeAPC = array();
     function apc_exists($key) {
         global $fakeAPC;
         return array_key_exists($key, $fakeAPC);
@@ -194,7 +194,9 @@ function getURL($file) {
         }
         if (hasIndex($href)) {
             $href = str_replace("./", "", $href);
-            return "<a href='".rawurlencode($href)."'>".$iconImg." ".$file."</a>";
+            $href = rawurlencode($href);
+            $href = str_replace("%2F", "/", $href);
+            return "<a href='$href'>$iconImg $file</a>";
         }
         return "<a href='?".base64_encode($href)."'>".$iconImg." ".$file."</a>";
     } else {
@@ -202,14 +204,16 @@ function getURL($file) {
         if ($settings["icons"]) {
             $iconImg = "<img src='?i=".getMimeType($currentDir.$file)."'/>";
         }
-        return "<a href='".rawurlencode($href)."'>".$iconImg." ".$file."</a>";
+            $href = rawurlencode($href);
+            $href = str_replace("%2F", "/", $href);
+        return "<a href='$href'>$iconImg $file</a>";
     }
 }
 
 function getContent($dir) {
     global $settings;
     if (!apc_exists($_SERVER['HTTP_HOST']."_Content_".base64_encode($dir))) {
-        $files = [];
+        $files = array();
         if ($handle = opendir($dir)) {
             while (false !== ($file = readdir($handle))) { //scan the folder
                 if ($file != "." AND $file != "..") {
@@ -275,7 +279,7 @@ function getSize($file) {
 }
 
 function toHumanReadable($filesize) {
-    $sizeTexts = ["KB", "MB", "GB", "TB", "PB"];
+    $sizeTexts = array("KB", "MB", "GB", "TB", "PB");
     $tmpfilesize = $filesize/1024;
     foreach ($sizeTexts as $lvl => $sizeText) {
         if ($filesize <= pow(1024,$lvl+2)) {
