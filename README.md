@@ -15,6 +15,10 @@ Feature
 * Highly-configurable
 * APC (Cache) supported
 
+Live demo
+==================
+[a link](http://www.luzi82.com/~wocky/?Li9yZXM=)
+
 Screenshots
 ==================
 
