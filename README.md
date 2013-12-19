@@ -25,7 +25,7 @@ Screenshots
 
 ![Overview](https://i.imgur.com/AgzrFEJ.png "Overview")
 ![Thumbnail](https://i.imgur.com/F6CM6Qj.png "Thumbnail")
-![Text preview](https:/i.imgur.com/GQSVcfZ.png "Text preview")
+![Text preview](http://i.imgur.com/LFhZph7.png "Text preview")
 ![Responsive 1](https://i.imgur.com/UOlDq0a.png "Responsive 1")
 ![Responsive 2](https://i.imgur.com/9BBY8aY.png "Responsive 2")
 ![Responsive 3](https://i.imgur.com/xW9VnhD.png "Responsive 3")
