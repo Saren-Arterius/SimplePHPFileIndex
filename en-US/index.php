@@ -458,17 +458,24 @@ $currentDir = currentDir();
             $.extend( $.fn.dataTableExt.oSort, {
                 "file-size-pre": function ( a ) {
                     var x = a.substring(0,a.length - 2);
-                         
-                    var x_unit = (a.substring(a.length - 2, a.length) == "KB" ? 1024 : 
-                                    (a.substring(a.length - 2, a.length) == "MB" ? 1048576 : 
-                                        (a.substring(a.length - 2, a.length) == "GB" ? 1073741824 : 
-                                            (a.substring(a.length - 2, a.length) == "TB" ? 1099511627776 : 
-                                                1
-                                            )
-                                        )
-                                    )
-                                );
-                      
+                    
+                    if (a.substring(a.length - 2, a.length) == "KB") {
+                        var x_unit = 1024;
+                    } else if (a.substring(a.length - 2, a.length) == "MB") {
+                        var x_unit = 1048576;
+                    } else if (a.substring(a.length - 2, a.length) == "GB") {
+                        var x_unit = 1073741824;
+                    } else if (a.substring(a.length - 2, a.length) == "TB") {
+                        var x_unit = 1099511627776;
+                    } else if (a.substring(a.length - 2, a.length) == "TB") {
+                        var x_unit = 1125899906842624;
+                    } else if (a.substring(a.length - 1, a.length) == "B") {
+                        x = a.substring(0,a.length - 1);
+                        var x_unit = 1;
+                    } else {
+                        return -1;
+                    }
+
                     return parseInt( x * x_unit, 10 );
                 },
              
