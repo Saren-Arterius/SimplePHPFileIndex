@@ -287,10 +287,10 @@ function getSize($file) {
 }
 
 function toHumanReadable($filesize) {
-    $sizeTexts = array("KB", "MB", "GB", "TB", "PB");
-    $tmpfilesize = $filesize/1024;
+    $sizeTexts = array("B", "KB", "MB", "GB", "TB", "PB");
+    $tmpfilesize = $filesize;
     foreach ($sizeTexts as $lvl => $sizeText) {
-        if ($filesize <= pow(1024,$lvl+2)) {
+        if ($filesize <= pow(1024,$lvl+1)) {
             return round($tmpfilesize,2).$sizeText;
         } else {
             $tmpfilesize = $tmpfilesize/1024;
@@ -459,8 +459,15 @@ $currentDir = currentDir();
                 "file-size-pre": function ( a ) {
                     var x = a.substring(0,a.length - 2);
                          
-                    var x_unit = (a.substring(a.length - 2, a.length) == "MB" ?
-                        1000 : (a.substring(a.length - 2, a.length) == "GB" ? 1000000 : 1));
+                    var x_unit = (a.substring(a.length - 2, a.length) == "KB" ? 1024 : 
+                                    (a.substring(a.length - 2, a.length) == "MB" ? 1048576 : 
+                                        (a.substring(a.length - 2, a.length) == "GB" ? 1073741824 : 
+                                            (a.substring(a.length - 2, a.length) == "TB" ? 1099511627776 : 
+                                                1
+                                            )
+                                        )
+                                    )
+                                );
                       
                     return parseInt( x * x_unit, 10 );
                 },
@@ -503,7 +510,7 @@ $currentDir = currentDir();
                         }
                     },
                     "aaSorting": [
-                        [ 1, "desc" ],
+                        [ 2, "asc" ],
                         [ 0, "asc" ]
                     ],
                     "aoColumns": [
