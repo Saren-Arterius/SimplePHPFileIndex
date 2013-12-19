@@ -373,6 +373,7 @@ $currentDir = currentDir();
 	<head>
 		<title>Index of <?php echo $currentDir; ?></title>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
         <style>
         .container {
@@ -573,12 +574,6 @@ $currentDir = currentDir();
                         placement: "auto",
                         html: true,
                     });
-                    
-                    $('.has_popover_no_html').popover({
-                        trigger: "hover",
-                        container: "body",
-                        placement: "auto",
-                    });
                 }
 
                 <?php 
@@ -643,7 +638,7 @@ $currentDir = currentDir();
                             } elseif (in_array($mineType, $settings["previewMimes"])) {
                         ?>
                                 
-                                <td class='has_popover_no_html' title='<?php echo $localization["preview"]; ?>' data-content='<?php echo getPreviewText($currentDir.$file); ?>'><?php echo getURL($file); ?></td>
+                                <td class='has_popover' title='<?php echo $localization["preview"]; ?>' data-content='<pre><?php echo getPreviewText($currentDir.$file); ?></pre>'><?php echo getURL($file); ?></td>
                         <?php
                             } else {
                         ?>
