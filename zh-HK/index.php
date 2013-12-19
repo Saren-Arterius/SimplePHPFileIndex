@@ -216,7 +216,7 @@ function getContent($dir) {
         $files = array();
         if ($handle = opendir($dir)) {
             while (false !== ($file = readdir($handle))) { //scan the folder
-                if ($file != "." AND $file != "..") {
+                if (substr($file, 0, 1) != ".") {
                     $files[] = $file;
                 }
             }
