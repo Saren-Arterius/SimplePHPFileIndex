@@ -144,7 +144,7 @@ if (!function_exists("apc_exists") AND !function_exists("apc_store") AND !functi
 
 function currentDir() {
     foreach ($_GET as $key => $val) {
-        $key = base64_decode($key);
+        $key = base64_decode(preg_replace("/\_/", "+", $key));
         while (!is_dir("./".$key) or isBadDir($key)) {
             $key = dirname($key);
             if ($key == "." or empty($key)) {
