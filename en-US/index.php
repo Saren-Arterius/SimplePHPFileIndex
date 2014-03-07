@@ -571,6 +571,20 @@ $currentDir = currentDir();
                         $("#DataTables_Table_0_last").text(lastStr);
                     }
                     
+                    if ($(window).width() <= 960) {
+                        $(".container").css({
+                            "width": "100%",
+                            "padding-right": "0px",
+                            "padding-left": "0px",
+                        });
+                    } else {
+                        $(".container").css({
+                            "width": "80%",
+                            "padding-right": "15px",
+                            "padding-left": "15px",
+                        });
+                    }
+                    
                     if ($(window).height() <= 500) {
                         $(".page-header").css({
                             "position": "absolute",
