@@ -18,7 +18,7 @@ Feature
 
 Live demo
 ==================
-[http://www.luzi82.com/~wocky/?Li9yZXM=](http://www.luzi82.com/~wocky/?Li9yZXM=)
+[http://www.luzi82.com/~wocky/res/](http://www.luzi82.com/~wocky/res/)
 
 Screenshots
 ==================
