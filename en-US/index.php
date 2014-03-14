@@ -187,29 +187,36 @@ function isBadDir($dir) {
 }
 
 function getURL($file) {
-    global $currentDir, $settings;;
-    $href = $currentDir.$file;
-    $iconImg = "";
-    if (!is_file($href)) {
-        if ($settings["icons"]) {
-            $iconImg = "<img src='?i=folder'/>";
-        }
-        if (hasIndex($href)) {
+    global $currentDir, $settings;
+    if (!apc_exists($_SERVER['HTTP_HOST']."_File_".base64_encode($file))) {
+        $href = $currentDir.$file;
+        $iconImg = "";
+        if (!is_file($href)) {
+            if ($settings["icons"]) {
+                $iconImg = "<img src='?i=folder'/>";
+            }
+            if (hasIndex($href)) {
+                $href = str_replace("./", "", $href);
+                $href = rawurlencode($href);
+                $href = str_replace("%2F", "/", $href);
+                $url = "<a href='$href'>$iconImg $file</a>";
+            } else {
+                $url = "<a href='?".base64_encode($href)."'>".$iconImg." ".$file."</a>";
+            }
+        } else {
             $href = str_replace("./", "", $href);
-            $href = rawurlencode($href);
-            $href = str_replace("%2F", "/", $href);
-            return "<a href='$href'>$iconImg $file</a>";
+            if ($settings["icons"]) {
+                $iconImg = "<img src='?i=".getMimeType($currentDir.$file)."'/>";
+            }
+                $href = rawurlencode($href);
+                $href = str_replace("%2F", "/", $href);
+            $url = "<a href='$href'>$iconImg $file</a>";
         }
-        return "<a href='?".base64_encode($href)."'>".$iconImg." ".$file."</a>";
+        apc_store($_SERVER['HTTP_HOST']."_File_".base64_encode($file), $url, $settings["contentTTL"]);
     } else {
-        $href = str_replace("./", "", $href);
-        if ($settings["icons"]) {
-            $iconImg = "<img src='?i=".getMimeType($currentDir.$file)."'/>";
-        }
-            $href = rawurlencode($href);
-            $href = str_replace("%2F", "/", $href);
-        return "<a href='$href'>$iconImg $file</a>";
+        $url = apc_fetch($_SERVER['HTTP_HOST']."_File_".base64_encode($file));
     }
+    return $url;
 }
 
 function getContent($dir) {
@@ -238,18 +245,27 @@ function getContent($dir) {
 }
 
 function getMimeType($file) {
-    global $mimeTypes;
-    if (!is_file($file)) {
-        return "folder";
-    } else {
-        foreach ($mimeTypes as $key => $val) {
-            $fileExt = pathinfo($file, PATHINFO_EXTENSION);
-            if (in_array(strtolower($fileExt), $val)) {
-                return $key;
+    if (!apc_exists($_SERVER['HTTP_HOST']."_MimeType_".base64_encode($file))) {
+        global $mimeTypes;
+        if (!is_file($file)) {
+            $mime = "folder";
+        } else {
+            foreach ($mimeTypes as $key => $val) {
+                $fileExt = pathinfo($file, PATHINFO_EXTENSION);
+                if (in_array(strtolower($fileExt), $val)) {
+                    $mime = $key;
+                    break;
+                }
+            }
+            if (!isset($mime)) {
+                $mime = "file";
             }
         }
-        return "file";
+        apc_store($_SERVER['HTTP_HOST']."_MimeType_".base64_encode($file), $mime, $settings["contentTTL"]);
+    } else {
+        $mime = apc_fetch($_SERVER['HTTP_HOST']."_MimeType_".base64_encode($file));
     }
+    return $mime;
 }
 
 function hasIndex($dir) {
