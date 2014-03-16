@@ -364,6 +364,7 @@ function getThumbnail($filepathEncoded) {
         $thumbStr = ob_get_contents();
         ob_end_clean();
 
+        apc_store($_SERVER['HTTP_HOST']."_thumb_lastModded_$filepathEncoded", time(), $settings["thumbnailTTL"]);
         apc_store($_SERVER['HTTP_HOST']."_thumb_$filepathEncoded", $thumbStr, $settings["thumbnailTTL"]);
     } else {
         $thumbStr = apc_fetch($_SERVER['HTTP_HOST']."_thumb_$filepathEncoded");
@@ -385,10 +386,29 @@ function getPreviewText($file) {
 
 if (isset($_GET["t"]) AND !empty($_GET["t"])):
     header('Content-Type: image/png');
+    $lastModded = apc_fetch($_SERVER['HTTP_HOST']."_thumb_lastModded_".$_GET["t"]);
+    header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastModded) . " GMT");
+    if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $lastModded && apc_exists($_SERVER['HTTP_HOST']."_thumb_".$_GET["t"])) {
+        header("HTTP/1.1 304 Not Modified");
+        exit();
+    }
     echo getThumbnail($_GET["t"]);
+
 elseif (isset($_GET["i"]) AND !empty($_GET["i"])):
     header('Content-Type: image/png');
+    if (apc_exists($_SERVER['HTTP_HOST']."_icon_lastModded_".$_GET["i"])) {
+        $lastModded = apc_fetch($_SERVER['HTTP_HOST']."_icon_lastModded_".$_GET["i"]);
+    } else {
+        $lastModded = time();
+        apc_store($_SERVER['HTTP_HOST']."_icon_lastModded_".$_GET["i"], $lastModded);
+    }
+    header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastModded) . " GMT");
+    if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $lastModded) {
+        header("HTTP/1.1 304 Not Modified");
+        exit();
+    }
     echo base64_decode($iconOfMimeTypes[$_GET["i"]]);
+    
 else:
 $currentDir = currentDir();
 ?>
