@@ -1,7 +1,7 @@
 SimplePHPFileIndex
 ==================
 
-A simple well-not-designed PHP file index. (Audo directory listing PHP page)
+A simple well-not-designed PHP file index. (Auto directory listing PHP page/script)
 
 Feature
 ==================
