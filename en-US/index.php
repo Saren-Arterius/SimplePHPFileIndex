@@ -29,7 +29,7 @@ $settings = array(
     /* Cache Time To Live (TTL) settings. They are all in seconds. 
        In case you don't know: Caches gets things faster, but things will not be updated real-time.
        If TTL is up, then cache expires, the page will have to generate the cache again, things would get a bit slower. */
-    "contentTTL"    => 60,  /* Content of a directory */
+    "contentTTL"    => 10,  /* Content of a directory */
     "hasIndexTTL"   => 3600,/* Whether a directory has an index file */
     "sizeTTL"       => 180, /* Size of a file */
     "lastModdedTTL" => 180, /* Last modified time of a file */
@@ -195,14 +195,7 @@ function getURL($file) {
             if ($settings["icons"]) {
                 $iconImg = "<img src='?i=folder'/>";
             }
-            if (hasIndex($href)) {
-                $href = str_replace("./", "", $href);
-                $href = rawurlencode($href);
-                $href = str_replace("%2F", "/", $href);
-                $url = "<a href='$href'>$iconImg $file</a>";
-            } else {
-                $url = "<a href='?".base64_encode($href)."'>".$iconImg." ".$file."</a>";
-            }
+            $url = "<a href='?".base64_encode($href)."'>".$iconImg." ".$file."</a>";
         } else {
             $href = str_replace("./", "", $href);
             if ($settings["icons"]) {
@@ -212,6 +205,7 @@ function getURL($file) {
                 $href = str_replace("%2F", "/", $href);
             $url = "<a href='$href'>$iconImg $file</a>";
         }
+        
         apc_store($_SERVER['HTTP_HOST']."_File_".base64_encode($file), $url, $settings["contentTTL"]);
     } else {
         $url = apc_fetch($_SERVER['HTTP_HOST']."_File_".base64_encode($file));
@@ -408,9 +402,14 @@ elseif (isset($_GET["i"]) AND !empty($_GET["i"])):
         exit();
     }
     echo base64_decode($iconOfMimeTypes[$_GET["i"]]);
-    
+
+elseif (hasIndex($currentDir = currentDir()) && $currentDir != "./"):
+    $currentDir = str_replace("./", "", $currentDir);
+    $currentDir = rawurlencode($currentDir);
+    $currentDir = str_replace("%2F", "/", $currentDir);
+    header("Location: $currentDir", true, 302);
 else:
-$currentDir = currentDir();
+
 ?>
 <!DOCTYPE HTML>
 <html>
