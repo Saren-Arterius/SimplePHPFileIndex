@@ -327,6 +327,9 @@ function getThumbnail($filepathEncoded) {
         if (isBadDir($filepathDecoded)) {
             exit;
         }
+        if (filesize($filepathDecoded) > 5242880) {
+            exit;
+        }
         $handle = fopen($filepathDecoded, "r");
         list($width, $height) = getimagesize($filepathDecoded);
         $srcImageStr = fread($handle, filesize($filepathDecoded));
