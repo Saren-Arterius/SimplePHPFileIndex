@@ -327,7 +327,7 @@ function getThumbnail($filepathEncoded) {
         if (isBadDir($filepathDecoded)) {
             exit;
         }
-        if (filesize($filepathDecoded) > 5242880) {
+        if (!in_array(getMimeType($filepathDecoded), $settings["thumbMimes"])) {
             exit;
         }
         $handle = fopen($filepathDecoded, "r");
