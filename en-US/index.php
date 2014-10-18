@@ -122,7 +122,10 @@ $iconOfMimeTypes = array(
 
 /* End of settings */
 
+$GLOBALS["requestPath"] = explode('?', $_SERVER['REQUEST_URI'], 2)[0];
+
 /* Fake APC function, 10x slower than APC. */
+
 if (!function_exists("apc_exists") AND !function_exists("apc_store") AND !function_exists("apc_fetch")) {
     $fakeAPC = array();
     function apc_exists($key) {
@@ -159,9 +162,12 @@ function currentDir() {
 }
 
 function parentDirLink() {
-    global $currentDir;
-    $parentDir = dirname($currentDir);
-    return "<a href='?".base64_encode($parentDir)."'>Index of $currentDir</a>";
+    $parentDir = dirname($GLOBALS["currentDir"]);
+    if ($GLOBALS["currentDir"] == "./") {
+        return "<a href='..'>Index of ".$GLOBALS["requestPath"].substr($GLOBALS["currentDir"], 2)."</a>";
+    }
+    return "<a href='?".base64_encode($parentDir)."'>Index of ".$GLOBALS["requestPath"].substr($GLOBALS["currentDir"], 2)."</a>";
+    
 }
 
 function isBadDir($dir) {
@@ -187,9 +193,9 @@ function isBadDir($dir) {
 }
 
 function getURL($file) {
-    global $currentDir, $settings;
-    if (!apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_File_".base64_encode($file))) {
-        $href = $currentDir.$file;
+    global $settings;
+    if (!apc_exists($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_File_".base64_encode($file))) {
+        $href = $GLOBALS["currentDir"].$file;
         $iconImg = "";
         if (!is_file($href)) {
             if ($settings["icons"]) {
@@ -199,23 +205,23 @@ function getURL($file) {
         } else {
             $href = str_replace("./", "", $href);
             if ($settings["icons"]) {
-                $iconImg = "<img src='?i=".getMimeType($currentDir.$file)."'/>";
+                $iconImg = "<img src='?i=".getMimeType($GLOBALS["currentDir"].$file)."'/>";
             }
                 $href = rawurlencode($href);
                 $href = str_replace("%2F", "/", $href);
             $url = "<a href='$href'>$iconImg $file</a>";
         }
         
-        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_File_".base64_encode($file), $url, $settings["contentTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_File_".base64_encode($file), $url, $settings["contentTTL"]);
     } else {
-        $url = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_File_".base64_encode($file));
+        $url = apc_fetch($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_File_".base64_encode($file));
     }
     return $url;
 }
 
 function getContent($dir) {
     global $settings;
-    if (!apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_Content_".base64_encode($dir))) {
+    if (!apc_exists($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_Content_".base64_encode($dir))) {
         $files = array();
         if ($handle = opendir($dir)) {
             while (false !== ($file = readdir($handle))) { //scan the folder
@@ -231,15 +237,15 @@ function getContent($dir) {
             }
             closedir($handle);
         }
-        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_Content_".base64_encode($dir), $files, $settings["contentTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_Content_".base64_encode($dir), $files, $settings["contentTTL"]);
     } else {
-        $files = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_Content_".base64_encode($dir));
+        $files = apc_fetch($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_Content_".base64_encode($dir));
     }
     return $files;
 }
 
 function getMimeType($file) {
-    if (!apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_MimeType_".base64_encode($file))) {
+    if (!apc_exists($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_MimeType_".base64_encode($file))) {
         global $mimeTypes;
         if (!is_file($file)) {
             $mime = "folder";
@@ -255,9 +261,9 @@ function getMimeType($file) {
                 $mime = "file";
             }
         }
-        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_MimeType_".base64_encode($file), $mime, $settings["contentTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_MimeType_".base64_encode($file), $mime, $settings["contentTTL"]);
     } else {
-        $mime = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_MimeType_".base64_encode($file));
+        $mime = apc_fetch($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_MimeType_".base64_encode($file));
     }
     return $mime;
 }
@@ -265,7 +271,7 @@ function getMimeType($file) {
 function hasIndex($dir) {
     /* If a directory contains index such as index.html, return the real path */
     global $settings;
-    if (!apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_hasIndex_".base64_encode($dir))) {
+    if (!apc_exists($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_hasIndex_".base64_encode($dir))) {
         $hasIndex = False;
         foreach (getContent($dir) as $childFile) {
             if (in_array($childFile, $settings["indexFiles"])) {
@@ -273,25 +279,25 @@ function hasIndex($dir) {
                 break;
             }
         }
-        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_hasIndex_".base64_encode($dir), $hasIndex, $settings["hasIndexTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_hasIndex_".base64_encode($dir), $hasIndex, $settings["hasIndexTTL"]);
     } else {
-        $hasIndex = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_hasIndex_".base64_encode($dir));
+        $hasIndex = apc_fetch($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_hasIndex_".base64_encode($dir));
     }
     return $hasIndex;
 }
 
 function getSize($file) {
     global $settings;
-    if (!apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_filesizeString_".base64_encode($file))) {
+    if (!apc_exists($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_filesizeString_".base64_encode($file))) {
         if (is_file($file)) {
             $filesize = filesize($file);
             $filesizeString = toHumanReadable($filesize);
         } else {
             $filesizeString = "";
         }
-        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_filesizeString_".base64_encode($file), $filesizeString, $settings["sizeTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_filesizeString_".base64_encode($file), $filesizeString, $settings["sizeTTL"]);
     } else {
-        $filesizeString = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_filesizeString_".base64_encode($file));
+        $filesizeString = apc_fetch($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_filesizeString_".base64_encode($file));
     }
     return $filesizeString;
 }
@@ -310,18 +316,18 @@ function toHumanReadable($filesize) {
 
 function getLastModded($file) {
     global $settings;
-    if (!apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_lastModded_".base64_encode($file))) {
+    if (!apc_exists($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_lastModded_".base64_encode($file))) {
         $lastModded = date("Y-m-d h:i:s", filemtime($file));
-        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_lastModded_".base64_encode($file), $lastModded, $settings["lastModdedTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_lastModded_".base64_encode($file), $lastModded, $settings["lastModdedTTL"]);
     } else {
-        $lastModded = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_lastModded_".base64_encode($file));
+        $lastModded = apc_fetch($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_lastModded_".base64_encode($file));
     }
     return $lastModded;
 }
 
 function getThumbnail($filepathEncoded) {
     global $settings;
-    if (!apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_thumb_$filepathEncoded")) {
+    if (!apc_exists($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_thumb_$filepathEncoded")) {
         $filepathDecoded = base64_decode($filepathEncoded);
         /* Unreliable trick to prevent parent directory of this index page from being listed, again. */
         if (isBadDir($filepathDecoded)) {
@@ -344,7 +350,7 @@ function getThumbnail($filepathEncoded) {
             imagepng($srcImage);
             $srcImageStr = ob_get_contents();
             ob_end_clean();
-            apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_thumb_$filepathEncoded", $srcImageStr, $settings["thumbnailTTL"]);
+            apc_store($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_thumb_$filepathEncoded", $srcImageStr, $settings["thumbnailTTL"]);
             return $srcImageStr;
         }
         
@@ -361,31 +367,31 @@ function getThumbnail($filepathEncoded) {
         $thumbStr = ob_get_contents();
         ob_end_clean();
 
-        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_thumb_lastModded_$filepathEncoded", time(), $settings["thumbnailTTL"]);
-        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_thumb_$filepathEncoded", $thumbStr, $settings["thumbnailTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_thumb_lastModded_$filepathEncoded", time(), $settings["thumbnailTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_thumb_$filepathEncoded", $thumbStr, $settings["thumbnailTTL"]);
     } else {
-        $thumbStr = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_thumb_$filepathEncoded");
+        $thumbStr = apc_fetch($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_thumb_$filepathEncoded");
     }
     return $thumbStr;
 }
 
 function getPreviewText($file) {
     global $settings;
-    if (!apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_previewText_".base64_encode($file))) {
+    if (!apc_exists($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_previewText_".base64_encode($file))) {
         $handle = fopen($file, "r");
         $previewText = htmlentities(fread($handle, $settings["previewLimit"]), ENT_QUOTES | ENT_IGNORE, "UTF-8");
-        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_previewText_".base64_encode($file), $previewText, $settings["previewTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_previewText_".base64_encode($file), $previewText, $settings["previewTTL"]);
     } else {
-        $previewText = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_previewText_".base64_encode($file));
+        $previewText = apc_fetch($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_previewText_".base64_encode($file));
     }
     return $previewText;
 }
 
 if (isset($_GET["t"]) AND !empty($_GET["t"])):
     header('Content-Type: image/png');
-    $lastModded = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_thumb_lastModded_".$_GET["t"]);
+    $lastModded = apc_fetch($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_thumb_lastModded_".$_GET["t"]);
     header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastModded) . " GMT");
-    if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $lastModded && apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_thumb_".$_GET["t"])) {
+    if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $lastModded && apc_exists($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_thumb_".$_GET["t"])) {
         header("HTTP/1.1 304 Not Modified");
         exit();
     }
@@ -393,11 +399,11 @@ if (isset($_GET["t"]) AND !empty($_GET["t"])):
 
 elseif (isset($_GET["i"]) AND !empty($_GET["i"])):
     header('Content-Type: image/png');
-    if (apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_icon_lastModded_".$_GET["i"])) {
-        $lastModded = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_icon_lastModded_".$_GET["i"]);
+    if (apc_exists($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_icon_lastModded_".$_GET["i"])) {
+        $lastModded = apc_fetch($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_icon_lastModded_".$_GET["i"]);
     } else {
         $lastModded = time();
-        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_icon_lastModded_".$_GET["i"], $lastModded);
+        apc_store($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_icon_lastModded_".$_GET["i"], $lastModded);
     }
     header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastModded) . " GMT");
     if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $lastModded) {
@@ -406,18 +412,18 @@ elseif (isset($_GET["i"]) AND !empty($_GET["i"])):
     }
     echo base64_decode($iconOfMimeTypes[$_GET["i"]]);
 
-elseif (hasIndex($currentDir = currentDir()) && $currentDir != "./"):
-    $currentDir = str_replace("./", "", $currentDir);
-    $currentDir = rawurlencode($currentDir);
-    $currentDir = str_replace("%2F", "/", $currentDir);
-    header("Location: $currentDir", true, 302);
+elseif (hasIndex($GLOBALS["currentDir"] = currentDir()) && $GLOBALS["currentDir"] != "./"):
+    $GLOBALS["currentDir"] = str_replace("./", "", $GLOBALS["currentDir"]);
+    $GLOBALS["currentDir"] = rawurlencode($GLOBALS["currentDir"]);
+    $GLOBALS["currentDir"] = str_replace("%2F", "/", $GLOBALS["currentDir"]);
+    header("Location: ".$GLOBALS['currentDir'], true, 302);
 else:
 
 ?>
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>Index of <?php echo $currentDir; ?></title>
+		<title>Index of <?php echo $GLOBALS["requestPath"].substr($GLOBALS["currentDir"], 2); ?></title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
@@ -695,24 +701,24 @@ else:
                     </thead>
                     <tbody>
                         <?php 
-                        foreach (getContent($currentDir) as $file) { ?>
+                        foreach (getContent($GLOBALS["currentDir"]) as $file) { ?>
                         
                             <tr<?php
-                                    if (!is_file($currentDir.$file)) { 
+                                    if (!is_file($GLOBALS["currentDir"].$file)) { 
                                         echo " class='success'"; 
                                     }
-                                    $mineType = getMimeType($currentDir.$file); 
+                                    $mineType = getMimeType($GLOBALS["currentDir"].$file); 
                                 ?>>
                         <?php
                             if (in_array($mineType, $settings["thumbMimes"])) {
                         ?>
 
-                                <td class='has_popover' title='<?php echo $localization["thumbnail"]; ?>' data-content='<img src="?t=<?php echo base64_encode($currentDir.$file); ?>"/>'><?php echo getURL($file); ?></td>
+                                <td class='has_popover' title='<?php echo $localization["thumbnail"]; ?>' data-content='<img src="?t=<?php echo base64_encode($GLOBALS["currentDir"].$file); ?>"/>'><?php echo getURL($file); ?></td>
                         <?php
                             } elseif (in_array($mineType, $settings["previewMimes"])) {
                         ?>
                                 
-                                <td class='has_popover' title='<?php echo $localization["preview"]; ?>' data-content='<pre><?php echo getPreviewText($currentDir.$file); ?></pre>'><?php echo getURL($file); ?></td>
+                                <td class='has_popover' title='<?php echo $localization["preview"]; ?>' data-content='<pre><?php echo getPreviewText($GLOBALS["currentDir"].$file); ?></pre>'><?php echo getURL($file); ?></td>
                         <?php
                             } else {
                         ?>
@@ -723,8 +729,8 @@ else:
                         ?>
                         
                                 <td><?php echo $localization[$mineType]; ?></td>
-                                <td><?php echo getSize($currentDir.$file); ?></td>
-                                <td><?php echo getLastModded($currentDir.$file); ?></td>
+                                <td><?php echo getSize($GLOBALS["currentDir"].$file); ?></td>
+                                <td><?php echo getLastModded($GLOBALS["currentDir"].$file); ?></td>
                             </tr>
                     <?php    
                         } 

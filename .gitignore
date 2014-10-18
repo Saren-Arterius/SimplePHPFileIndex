@@ -1,7 +1,7 @@
 #################
 ## Eclipse
 #################
-zhtw.patch
+*.patch
 *.pydevproject
 .project
 .metadata
