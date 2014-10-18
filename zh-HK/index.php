@@ -50,14 +50,14 @@ $localization = array(
     "audio"         => "音像",
     "compressed"    => "壓縮檔",
     "cdimage"       => "映像檔",
-    "executable"    => "執行檔",
-    "subtitle"      => "字幕檔",
+    "executable"    => "可執行檔",
+    "subtitle"      => "字幕",
     "installer"     => "安裝程式",
     "appext"        => "程式擴展",
-    "text"          => "文字檔",
-    "python"        => "Python檔",
-    "javascript"    => "Javascript檔",
-    "script"        => "腳本程式",
+    "text"          => "純文字",
+    "python"        => "Python指令",
+    "javascript"    => "Javascript指令",
+    "script"        => "工序指令",
 /*  "html"          => "Happy toffee milk lemon", */
     
     "folder"        => "=資料夾=",
@@ -188,7 +188,7 @@ function isBadDir($dir) {
 
 function getURL($file) {
     global $currentDir, $settings;
-    if (!apc_exists($_SERVER['HTTP_HOST']."_File_".base64_encode($file))) {
+    if (!apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_File_".base64_encode($file))) {
         $href = $currentDir.$file;
         $iconImg = "";
         if (!is_file($href)) {
@@ -206,16 +206,16 @@ function getURL($file) {
             $url = "<a href='$href'>$iconImg $file</a>";
         }
         
-        apc_store($_SERVER['HTTP_HOST']."_File_".base64_encode($file), $url, $settings["contentTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_File_".base64_encode($file), $url, $settings["contentTTL"]);
     } else {
-        $url = apc_fetch($_SERVER['HTTP_HOST']."_File_".base64_encode($file));
+        $url = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_File_".base64_encode($file));
     }
     return $url;
 }
 
 function getContent($dir) {
     global $settings;
-    if (!apc_exists($_SERVER['HTTP_HOST']."_Content_".base64_encode($dir))) {
+    if (!apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_Content_".base64_encode($dir))) {
         $files = array();
         if ($handle = opendir($dir)) {
             while (false !== ($file = readdir($handle))) { //scan the folder
@@ -231,15 +231,15 @@ function getContent($dir) {
             }
             closedir($handle);
         }
-        apc_store($_SERVER['HTTP_HOST']."_Content_".base64_encode($dir), $files, $settings["contentTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_Content_".base64_encode($dir), $files, $settings["contentTTL"]);
     } else {
-        $files = apc_fetch($_SERVER['HTTP_HOST']."_Content_".base64_encode($dir));
+        $files = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_Content_".base64_encode($dir));
     }
     return $files;
 }
 
 function getMimeType($file) {
-    if (!apc_exists($_SERVER['HTTP_HOST']."_MimeType_".base64_encode($file))) {
+    if (!apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_MimeType_".base64_encode($file))) {
         global $mimeTypes;
         if (!is_file($file)) {
             $mime = "folder";
@@ -255,9 +255,9 @@ function getMimeType($file) {
                 $mime = "file";
             }
         }
-        apc_store($_SERVER['HTTP_HOST']."_MimeType_".base64_encode($file), $mime, $settings["contentTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_MimeType_".base64_encode($file), $mime, $settings["contentTTL"]);
     } else {
-        $mime = apc_fetch($_SERVER['HTTP_HOST']."_MimeType_".base64_encode($file));
+        $mime = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_MimeType_".base64_encode($file));
     }
     return $mime;
 }
@@ -265,7 +265,7 @@ function getMimeType($file) {
 function hasIndex($dir) {
     /* If a directory contains index such as index.html, return the real path */
     global $settings;
-    if (!apc_exists($_SERVER['HTTP_HOST']."_hasIndex_".base64_encode($dir))) {
+    if (!apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_hasIndex_".base64_encode($dir))) {
         $hasIndex = False;
         foreach (getContent($dir) as $childFile) {
             if (in_array($childFile, $settings["indexFiles"])) {
@@ -273,25 +273,25 @@ function hasIndex($dir) {
                 break;
             }
         }
-        apc_store($_SERVER['HTTP_HOST']."_hasIndex_".base64_encode($dir), $hasIndex, $settings["hasIndexTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_hasIndex_".base64_encode($dir), $hasIndex, $settings["hasIndexTTL"]);
     } else {
-        $hasIndex = apc_fetch($_SERVER['HTTP_HOST']."_hasIndex_".base64_encode($dir));
+        $hasIndex = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_hasIndex_".base64_encode($dir));
     }
     return $hasIndex;
 }
 
 function getSize($file) {
     global $settings;
-    if (!apc_exists($_SERVER['HTTP_HOST']."_filesizeString_".base64_encode($file))) {
+    if (!apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_filesizeString_".base64_encode($file))) {
         if (is_file($file)) {
             $filesize = filesize($file);
             $filesizeString = toHumanReadable($filesize);
         } else {
             $filesizeString = "";
         }
-        apc_store($_SERVER['HTTP_HOST']."_filesizeString_".base64_encode($file), $filesizeString, $settings["sizeTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_filesizeString_".base64_encode($file), $filesizeString, $settings["sizeTTL"]);
     } else {
-        $filesizeString = apc_fetch($_SERVER['HTTP_HOST']."_filesizeString_".base64_encode($file));
+        $filesizeString = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_filesizeString_".base64_encode($file));
     }
     return $filesizeString;
 }
@@ -310,18 +310,18 @@ function toHumanReadable($filesize) {
 
 function getLastModded($file) {
     global $settings;
-    if (!apc_exists($_SERVER['HTTP_HOST']."_lastModded_".base64_encode($file))) {
+    if (!apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_lastModded_".base64_encode($file))) {
         $lastModded = date("Y-m-d h:i:s", filemtime($file));
-        apc_store($_SERVER['HTTP_HOST']."_lastModded_".base64_encode($file), $lastModded, $settings["lastModdedTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_lastModded_".base64_encode($file), $lastModded, $settings["lastModdedTTL"]);
     } else {
-        $lastModded = apc_fetch($_SERVER['HTTP_HOST']."_lastModded_".base64_encode($file));
+        $lastModded = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_lastModded_".base64_encode($file));
     }
     return $lastModded;
 }
 
 function getThumbnail($filepathEncoded) {
     global $settings;
-    if (!apc_exists($_SERVER['HTTP_HOST']."_thumb_$filepathEncoded")) {
+    if (!apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_thumb_$filepathEncoded")) {
         $filepathDecoded = base64_decode($filepathEncoded);
         /* Unreliable trick to prevent parent directory of this index page from being listed, again. */
         if (isBadDir($filepathDecoded)) {
@@ -344,7 +344,7 @@ function getThumbnail($filepathEncoded) {
             imagepng($srcImage);
             $srcImageStr = ob_get_contents();
             ob_end_clean();
-            apc_store($_SERVER['HTTP_HOST']."_thumb_$filepathEncoded", $srcImageStr, $settings["thumbnailTTL"]);
+            apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_thumb_$filepathEncoded", $srcImageStr, $settings["thumbnailTTL"]);
             return $srcImageStr;
         }
         
@@ -361,31 +361,31 @@ function getThumbnail($filepathEncoded) {
         $thumbStr = ob_get_contents();
         ob_end_clean();
 
-        apc_store($_SERVER['HTTP_HOST']."_thumb_lastModded_$filepathEncoded", time(), $settings["thumbnailTTL"]);
-        apc_store($_SERVER['HTTP_HOST']."_thumb_$filepathEncoded", $thumbStr, $settings["thumbnailTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_thumb_lastModded_$filepathEncoded", time(), $settings["thumbnailTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_thumb_$filepathEncoded", $thumbStr, $settings["thumbnailTTL"]);
     } else {
-        $thumbStr = apc_fetch($_SERVER['HTTP_HOST']."_thumb_$filepathEncoded");
+        $thumbStr = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_thumb_$filepathEncoded");
     }
     return $thumbStr;
 }
 
 function getPreviewText($file) {
     global $settings;
-    if (!apc_exists($_SERVER['HTTP_HOST']."_previewText_".base64_encode($file))) {
+    if (!apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_previewText_".base64_encode($file))) {
         $handle = fopen($file, "r");
         $previewText = htmlentities(fread($handle, $settings["previewLimit"]), ENT_QUOTES | ENT_IGNORE, "UTF-8");
-        apc_store($_SERVER['HTTP_HOST']."_previewText_".base64_encode($file), $previewText, $settings["previewTTL"]);
+        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_previewText_".base64_encode($file), $previewText, $settings["previewTTL"]);
     } else {
-        $previewText = apc_fetch($_SERVER['HTTP_HOST']."_previewText_".base64_encode($file));
+        $previewText = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_previewText_".base64_encode($file));
     }
     return $previewText;
 }
 
 if (isset($_GET["t"]) AND !empty($_GET["t"])):
     header('Content-Type: image/png');
-    $lastModded = apc_fetch($_SERVER['HTTP_HOST']."_thumb_lastModded_".$_GET["t"]);
+    $lastModded = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_thumb_lastModded_".$_GET["t"]);
     header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastModded) . " GMT");
-    if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $lastModded && apc_exists($_SERVER['HTTP_HOST']."_thumb_".$_GET["t"])) {
+    if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $lastModded && apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_thumb_".$_GET["t"])) {
         header("HTTP/1.1 304 Not Modified");
         exit();
     }
@@ -393,11 +393,11 @@ if (isset($_GET["t"]) AND !empty($_GET["t"])):
 
 elseif (isset($_GET["i"]) AND !empty($_GET["i"])):
     header('Content-Type: image/png');
-    if (apc_exists($_SERVER['HTTP_HOST']."_icon_lastModded_".$_GET["i"])) {
-        $lastModded = apc_fetch($_SERVER['HTTP_HOST']."_icon_lastModded_".$_GET["i"]);
+    if (apc_exists($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_icon_lastModded_".$_GET["i"])) {
+        $lastModded = apc_fetch($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_icon_lastModded_".$_GET["i"]);
     } else {
         $lastModded = time();
-        apc_store($_SERVER['HTTP_HOST']."_icon_lastModded_".$_GET["i"], $lastModded);
+        apc_store($_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."_icon_lastModded_".$_GET["i"], $lastModded);
     }
     header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastModded) . " GMT");
     if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $lastModded) {
