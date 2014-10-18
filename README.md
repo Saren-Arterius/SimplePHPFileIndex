@@ -18,7 +18,7 @@ Feature
 
 Live demo
 ==================
-[http://www.luzi82.com/~wocky/res/](http://www.luzi82.com/~wocky/res/)
+[https://www.saren.me/spfi-demo/](https://www.saren.me/spfi-demo/)
 
 Screenshots
 ==================
