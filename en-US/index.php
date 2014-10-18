@@ -246,7 +246,7 @@ function getContent($dir) {
 
 function getMimeType($file) {
     if (!apc_exists($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_MimeType_".base64_encode($file))) {
-        global $mimeTypes;
+        global $mimeTypes, $settings;
         if (!is_file($file)) {
             $mime = "folder";
         } else {
