@@ -9,7 +9,7 @@ error_reporting(0);
 
 $settings = array(
     "helpers"       => True,/* Enable thumbnails, text preview, tooltip */
-    "responsive"    => True,/* Enable responsive design */    
+    "responsive"    => True,/* Enable respongsive design */    
     "icons"         => True,/* File icons */
     
     "displayDot"    => False,   /* Display files and folders start with "." */
@@ -194,7 +194,8 @@ function isBadDir($dir) {
 
 function getURL($file) {
     global $settings;
-    if (!apc_exists($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_File_".base64_encode($file))) {
+    $key = $_SERVER['HTTP_HOST'].$GLOBALS["requestPath"].base64_encode($GLOBALS["currentDir"].$file);
+    if (!apc_exists($key)) {
         $href = $GLOBALS["currentDir"].$file;
         $iconImg = "";
         if (!is_file($href)) {
@@ -207,17 +208,17 @@ function getURL($file) {
             if ($settings["icons"]) {
                 $iconImg = "<img src='?i=".getMimeType($GLOBALS["currentDir"].$file)."'/>";
             }
-                $href = rawurlencode($href);
-                $href = str_replace("%2F", "/", $href);
+            $href = rawurlencode($href);
+            $href = str_replace("%2F", "/", $href);
             $url = "<a href='$href'>$iconImg $file</a>";
         }
-        
-        apc_store($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_File_".base64_encode($file), $url, $settings["contentTTL"]);
+        apc_store($key, $url, $settings["contentTTL"]);
     } else {
-        $url = apc_fetch($_SERVER['HTTP_HOST'].$GLOBALS["requestPath"]."_File_".base64_encode($file));
+        $url = apc_fetch($key);
     }
     return $url;
 }
+
 
 function getContent($dir) {
     global $settings;
