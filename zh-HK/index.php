@@ -133,7 +133,7 @@ if (!function_exists("apc_exists") AND !function_exists("apc_store") AND !functi
         return array_key_exists($key, $fakeAPC);
     }
     
-    function apc_store($key, $val, $ttl) {
+    function apc_store($key, $val, $ttl=0) {
         global $fakeAPC;
         $fakeAPC[$key] = $val;
         return True;
